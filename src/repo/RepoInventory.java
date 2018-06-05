@@ -1,9 +1,20 @@
 package repo;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class RepoInventory extends InformationFile {
 
+    private final static String fileName = "inventory.txt";
+    private final static String[] text = {"histories = {",
+                                          "};",
+                                          "lastFiles = {",
+                                          "};"};
+
+    // Data
     /**
      * 通过一个文件来初始化所有属性内容
      *
@@ -11,6 +22,61 @@ public class RepoInventory extends InformationFile {
      */
     public RepoInventory(File f) {
         super(f);
+    }
+
+    public RepoInventory(Path path) {
+        super(path);
+        file = Paths.get(path.toString(), fileName).toFile();
+        String line;
+
+        ArrayList<String> historyNames = new ArrayList<>();
+        ArrayList<String> lastFiles = new ArrayList<>();
+        try {
+            FileReader fin = new FileReader(file);
+            BufferedReader in = new BufferedReader(fin);
+            // Read histories
+            in.readLine();
+            System.out.println("Load Histories...");
+            while (!(line = in.readLine()).equals("};")) {
+                System.out.println(line);
+                historyNames.add(line);
+            }
+
+            // Read last Files
+            in.readLine();
+            System.out.println("Load LastFiles...");
+            while (!(line = in.readLine()).equals("};")) {
+                System.out.println(line);
+                lastFiles.add(line);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        multiAttributes.put("histories", historyNames);
+        multiAttributes.put("lastFiles", lastFiles);
+    }
+
+
+    /**
+     * 新建一个inventory.txt
+     * @param org
+     */
+    public static void initiate(Path org) {
+        String s = org.toString();
+        Path path = Paths.get(s, fileName);
+        try {
+            File file = path.toFile();
+            file.createNewFile();
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+            for (String line : text)
+                out.println(line);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Iterable<String> getCurrentFilesName() {

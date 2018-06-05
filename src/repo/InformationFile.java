@@ -1,13 +1,14 @@
 package repo;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * 一个包含信息文件所有属性的类
  */
-public class InformationFile {
+public abstract class InformationFile {
     /**
      * 包含单条信息的单属性
      */
@@ -30,12 +31,18 @@ public class InformationFile {
         // ...
     }
 
+    public InformationFile(Path f) {
+    }
+
+
     /**
      * 更新（写入）文件
      */
     public void update() {
         // ...
     }
+
+
 
 
 
