@@ -7,7 +7,7 @@ import java.util.HashMap;
 /**
  * 一个包含信息文件所有属性的类
  */
-class InformationFile {
+public class InformationFile {
     /**
      * 包含单条信息的单属性
      */
