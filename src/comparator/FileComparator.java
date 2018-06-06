@@ -10,6 +10,7 @@ import java.util.Collections;
 public class FileComparator {
     private File file1, file2;
     private ArrayList<Pair<Character, String>> changes;
+    private boolean equal = true;
 
     // data
     private final static char ADD = '+';
@@ -56,7 +57,7 @@ public class FileComparator {
      * @param dst 当前文件形成的字符串数组
      * @return 格式化的文件区别数组
      */
-    private static ArrayList<Pair<Character, String>> compare(ArrayList<String> src, ArrayList<String> dst) {
+    private ArrayList<Pair<Character, String>> compare(ArrayList<String> src, ArrayList<String> dst) {
         ArrayList<Pair<Character, String>> ret = new ArrayList<>();
 
         int[][] mat = getLDMat(src, dst);
@@ -113,13 +114,16 @@ public class FileComparator {
 
         for (int i = 0; i < s1.length; ++i) {
             if (s1[i].equals(s2[i])) {
-                ret.add(new Pair<>(STAY, " "));
+                ret.add(new Pair<>(STAY, s2[i]));
             } else if (s1[i].equals(" ")) {
                 ret.add(new Pair<>(ADD, s2[i]));
+                equal = false;
             } else if (s2[i].equals(" ")) {
                 ret.add(new Pair<>(DELETE, s1[i]));
+                equal = false;
             } else {
                 ret.add(new Pair<>(MODIFY, s2[i]));
+                equal = false;
             }
 
         }
@@ -173,6 +177,8 @@ public class FileComparator {
     public Iterable<Pair<Character, String>> getChanges() {
         return changes;
     }
+
+    public boolean equal() { return equal; }
 
     public static void main(String[] args) {
         /*
