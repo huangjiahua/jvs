@@ -34,17 +34,4 @@ public abstract class InformationFile {
     public InformationFile(Path f) {
     }
 
-
-    /**
-     * 更新（写入）文件
-     */
-    public void update() {
-        // ...
-    }
-
-
-
-
-
-
 }

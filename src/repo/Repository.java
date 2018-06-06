@@ -1,5 +1,7 @@
 package repo;
 
+import comparator.DirectoryComparator;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -7,7 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.stream.Stream;
 
 /**
@@ -18,6 +22,34 @@ public class Repository {
     private static final String directoryName = "jvs";
     private static final String lastFilesDirName = "lastFiles";
     private Path path;
+    /**
+     * 版本库目录
+     */
+    private RepoInventory inventory;
+
+    /**
+     * 当前文件
+     */
+    private HashMap<String, File> currentFiles = new HashMap<>();
+
+    /**
+     * 上一版文件
+     */
+    private HashMap<String, File> lastFiles = new HashMap<>();
+
+    /**
+     * 历史记录
+     */
+    private Histories histories;
+
+    /**
+     * 文件比较
+     */
+    private DirectoryComparator dirComparator;
+
+    private Path lastPath;
+
+
 
     /**
      * 根据文件目录创建版本库
@@ -35,6 +67,7 @@ public class Repository {
 
         // 创建之前文件项
         Path lastFilesPath = Paths.get(path.toString(), lastFilesDirName);
+        lastPath = lastFilesPath;
         File lastFilesDir  = lastFilesPath.toFile();
         for (String fileName : lastFilesDir.list()) {
             Path filePath = Paths.get(lastFilesPath.toString(), fileName);
@@ -59,6 +92,8 @@ public class Repository {
             }
         }
 
+        // 比较文件
+        dirComparator = new DirectoryComparator(lastFiles, currentFiles);
 
     }
 
@@ -91,6 +126,46 @@ public class Repository {
 
     }
 
+    public void commit(Commitment commitment) {
+        Random ran = new Random();
+        String newName;
+        while (inventory.checkExist((newName = Integer.toString(Math.abs(ran.nextInt())))))
+            ;
+        System.out.println(newName);
+        commitment.setVersionName(newName);
+
+        inventory.update(commitment);
+
+        histories.update(commitment, dirComparator);
+
+        try {
+            Path temp = Paths.get(path.toString(), "histories", newName, lastFilesDirName);
+            Files.createDirectory(temp);
+            for (String s : lastFiles.keySet())
+                Files.copy(lastFiles.get(s).toPath(), Paths.get(temp.toString(), s));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String s : commitment.filesToDelete) {
+            try {
+                Files.delete(lastFiles.get(s).toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (String s : commitment.filesToChange) {
+            try {
+                if (lastFiles.containsKey(s))
+                    Files.delete(lastFiles.get(s).toPath());
+                Files.copy(currentFiles.get(s).toPath(), Paths.get(lastPath.toString(), s));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * 删除版本库
      */
@@ -99,34 +174,23 @@ public class Repository {
     }
 
 
-    /**
-     * 版本库目录
-     */
-    private RepoInventory inventory;
 
-    /**
-     * 当前文件
-     */
-    private HashMap<String, File> currentFiles = new HashMap<>();
-
-    /**
-     * 上一版文件
-     */
-    private HashMap<String, File> lastFiles = new HashMap<>();
-
-    /**
-     * 历史记录
-     */
-    private Histories histories;
 
     public static void main(String[] args) {
+        ArrayList<String> files = new ArrayList<>();
+        files.add("15_36.cpp");
+        ArrayList<String> files2 = new ArrayList<>();
 
+        Commitment c = new Commitment("try3", "haha", files, files2);
 
         try {
             Repository r = new Repository(Paths.get("test"));
+            r.commit(c);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
 
 
     }

@@ -13,10 +13,10 @@ public class FileComparator {
     private boolean equal = true;
 
     // data
-    private final static char ADD = '+';
-    private final static char DELETE = '-';
-    private final static char STAY = '=';
-    private final static char MODIFY = '/';
+    public final static char ADD = '+';
+    public final static char DELETE = '-';
+    public final static char STAY = '=';
+    public final static char MODIFY = '/';
 
     public FileComparator(File a, File b) {
         file1 = a;
@@ -82,7 +82,7 @@ public class FileComparator {
         }
 
         for (int i = src.size(), j = dst.size(), k = s1.length - 1;
-                i != 0 || j != 0; --k) {
+             (i != 0 || j != 0) && k != 0; --k) {
             if (i == 0) {
                 s1[k] = " ";
                 s2[k] = dst.get(j-1);
@@ -174,7 +174,7 @@ public class FileComparator {
         return ret;
     }
 
-    public Iterable<Pair<Character, String>> getChanges() {
+    public ArrayList<Pair<Character, String>> getChanges() {
         return changes;
     }
 

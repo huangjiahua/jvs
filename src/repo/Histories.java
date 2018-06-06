@@ -1,5 +1,6 @@
 package repo;
 
+import comparator.DirectoryComparator;
 import repo.version.Version;
 import repo.version.VersionInventory;
 
@@ -54,5 +55,10 @@ class Histories {
             e.printStackTrace();
         }
 
+    }
+
+    public void update(Commitment commitment, DirectoryComparator dirComparator) {
+        Version v = new Version(commitment, dirComparator, path);
+        v.write();
     }
 }

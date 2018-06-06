@@ -1,5 +1,6 @@
 package repo.version;
 
+import comparator.SingleFileChanges;
 import javafx.util.Pair;
 import repo.InformationFile;
 
@@ -43,7 +44,28 @@ public class FileChanges extends InformationFile {
         }
     }
 
+    public FileChanges(String name, SingleFileChanges singleChanges, Path path) {
+        super(path);
+        file = Paths.get(path.toString(), name).toFile();
+        lines = singleChanges.getChanges();
+    }
+
+
     public int getMaxLines() {
-        return Integer.parseInt(singleAttributes.get("maxLines"));
+        return lines.size();
+    }
+
+    public void write() {
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(file));
+            out.println(text + lines.size());
+            for (Pair<Character, String> p : lines) {
+                out.println(p.getKey() + p.getValue());
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package repo.version;
 
+import repo.Commitment;
 import repo.InformationFile;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class VersionInventory extends InformationFile {
     private final static String fileName = "inventory.txt";
@@ -32,9 +34,10 @@ public class VersionInventory extends InformationFile {
             System.out.println("Summary: " + summary);
             line = in.readLine();
             description = line.substring(text[1].length());
+            while (!(line = in.readLine()).equals("changedFiles = {"))
+                description += '\n' + line;
             System.out.println("Description: " + description);
 
-            in.readLine();
             while (!(line = in.readLine()).equals("};")) {
                 changedFiles.add(line);
                 System.out.println(line);
@@ -50,6 +53,19 @@ public class VersionInventory extends InformationFile {
         singleAttributes.put("description", description);
 
 
+    }
+
+    public VersionInventory(Commitment commitment, Path path) {
+        super(path);
+        file = Paths.get(path.toString(), fileName).toFile();
+        singleAttributes.put("summary", commitment.summary);
+        singleAttributes.put("description", commitment.description);
+
+        ArrayList<String> files = (ArrayList<String>)commitment.filesToChange.clone();
+        for (String s : commitment.filesToDelete)
+            files.add(s);
+
+        multiAttributes.put("changedFiles", files);
     }
 
     public static void initiate(Path org) {
@@ -86,4 +102,21 @@ public class VersionInventory extends InformationFile {
     }
 
 
+    public void write() {
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(file));
+            out.println(text[0] + singleAttributes.get("summary"));
+            out.println(text[1] + singleAttributes.get("description"));
+
+            out.println(text[2]);
+            for (String s : multiAttributes.get("changedFiles"))
+                out.println(s);
+
+            out.println(text[3]);
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

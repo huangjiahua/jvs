@@ -79,6 +79,13 @@ public class RepoInventory extends InformationFile {
         }
     }
 
+    public boolean checkExist(String num) {
+        for (String s : multiAttributes.get("histories"))
+            if (num.equals(s))
+                return true;
+        return false;
+    }
+
     public Iterable<String> getCurrentFilesName() {
         return multiAttributes.get("currentFiles");
     }
@@ -89,5 +96,41 @@ public class RepoInventory extends InformationFile {
 
     public Iterable<String> getLastFilesName() {
         return multiAttributes.get("lastFiles");
+    }
+
+    public void update(Commitment commitment) {
+        multiAttributes.get("histories").add(commitment.versionName);
+
+        ArrayList<String> temp = multiAttributes.get("lastFiles");
+        for (String s : commitment.filesToDelete) {
+            if (temp.contains(s))
+                temp.remove(s);
+        }
+
+        for (String s : commitment.filesToChange) {
+            if (!temp.contains(s))
+                temp.add(s);
+        }
+
+        update();
+    }
+
+    private void update() {
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(file));
+            out.println(text[0]);
+            for (String s : multiAttributes.get("histories"))
+                out.println(s);
+            out.println(text[1]);
+
+            out.println(text[2]);
+            for (String s : multiAttributes.get("lastFiles"))
+                out.println(s);
+            out.println(text[3]);
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

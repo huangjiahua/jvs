@@ -1,5 +1,10 @@
 package repo.version;
 
+import comparator.DirectoryComparator;
+import repo.Commitment;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -26,6 +31,28 @@ public class Version {
 
         for (String str : inventory.getChangedFilesName()) {
             files.put(str, new FileChanges(this.path, str));
+        }
+    }
+
+    public Version(Commitment commitment, DirectoryComparator dirComparator, Path path) {
+        this.path = Paths.get(path.toString(), commitment.versionName);
+        inventory = new VersionInventory(commitment, this.path);
+
+        for (String name : inventory.getChangedFilesName()) {
+            FileChanges f = new FileChanges(name, dirComparator.getSingleChanges(name), this.path);
+            files.put(name, f);
+        }
+    }
+
+    public void write() {
+        try {
+            Files.createDirectory(path);
+            inventory.write();
+            for (FileChanges fc : files.values()) {
+                fc.write();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
