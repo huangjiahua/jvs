@@ -21,7 +21,7 @@ public class Repository {
 
     private static final String directoryName = "jvs";
     private static final String lastFilesDirName = "lastFiles";
-    private Path path;
+    private Path path, originalPath;
     /**
      * 版本库目录
      */
@@ -55,6 +55,7 @@ public class Repository {
      * 根据文件目录创建版本库
      */
     public Repository(Path org) throws FileNotFoundException {
+        originalPath = org;
         path = Paths.get(org.toAbsolutePath().toString(), directoryName);
         if (!Files.exists(path))
             throw new FileNotFoundException(".jvs not found");
@@ -173,19 +174,74 @@ public class Repository {
         // ...
     }
 
+    /**
+     * 版本回退
+     * @param version
+     * @return
+     */
+    public boolean backTo(String version) {
+        if (!histories.existVersion(version)) return false;
+
+        if (histories.isLatest(version)) {
+            for (File f : currentFiles.values()) {
+                try {
+                    Files.delete(f.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (String s : lastFiles.keySet()) {
+                Path newPath = Paths.get(originalPath.toString(), s);
+                try {
+                    Path temp = lastFiles.get(s).toPath();
+                    if(!Files.isHidden(temp) && !Files.isDirectory(temp)) {
+                        Files.copy(temp, newPath);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+            String nextVersion = histories.getNextVersion(version);
+            Path target = Paths.get(path.toString(), "histories", nextVersion, "lastFiles");
+            File dir = target.toFile();
+            String[] filesName = dir.list();
+            for (File f : currentFiles.values()) {
+                try {
+                    Files.delete(f.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (String s : filesName) {
+                Path oldPath = Paths.get(target.toString(), s);
+                Path newPath = Paths.get(originalPath.toString(), s);
+                try {
+
+                    if(!Files.isHidden(oldPath) && !Files.isDirectory(oldPath)) {
+                        if (Files.exists(newPath))
+                            Files.delete(newPath);
+                        Files.copy(oldPath, newPath);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return true;
+    }
+
 
 
 
     public static void main(String[] args) {
-        ArrayList<String> files = new ArrayList<>();
-        files.add("15_36.cpp");
-        ArrayList<String> files2 = new ArrayList<>();
-
-        Commitment c = new Commitment("try3", "haha", files, files2);
-
         try {
             Repository r = new Repository(Paths.get("test"));
-            r.commit(c);
+            r.backTo("133818106");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

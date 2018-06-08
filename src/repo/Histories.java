@@ -61,4 +61,37 @@ class Histories {
         Version v = new Version(commitment, dirComparator, path);
         v.write();
     }
+
+    /**
+     * 检查当前版本号是否存在
+     * @param version
+     * @return
+     */
+    public boolean existVersion(String version) {
+        return timeLines.contains(version);
+    }
+
+    /**
+     * 检查当前版本是否为最新的版本
+     * @param version
+     * @return
+     */
+    public boolean isLatest(String version) {
+        if (timeLines.isEmpty())
+            return false;
+        return version.equals(timeLines.get(timeLines.size()-1));
+    }
+
+    /**
+     * 获取下一个版本
+     * @param version
+     * @return
+     */
+    public String getNextVersion(String version) {
+        int i = timeLines.indexOf(version);
+        if (i != timeLines.size() - 1)
+            return timeLines.get(i + 1);
+        else
+            return null;
+    }
 }
