@@ -76,6 +76,14 @@
               </grid>
             </children>
           </grid>
+          <component id="22dd2" class="javax.swing.JLabel" binding="projectDir">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <foreground color="-2299415"/>
+              <requestFocusEnabled value="false"/>
+              <text value="          未打开"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="81486" binding="Left" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -122,12 +130,13 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="e4e7e" class="javax.swing.JList" binding="list1" default-binding="true">
+                  <component id="e4e7e" class="javax.swing.JList" binding="historiesList">
                     <constraints/>
                     <properties>
                       <background color="-591622"/>
                       <fixedCellHeight value="30"/>
-                      <font size="20"/>
+                      <font size="16"/>
+                      <opaque value="true"/>
                       <preferredSize width="200" height="350"/>
                       <selectionBackground color="-16554282"/>
                     </properties>
@@ -178,10 +187,11 @@
                     </properties>
                     <border type="none"/>
                     <children>
-                      <component id="a3c72" class="javax.swing.JList" binding="list2" default-binding="true">
+                      <component id="a3c72" class="javax.swing.JList" binding="changedFiles">
                         <constraints/>
                         <properties>
                           <background color="-591622"/>
+                          <font size="16"/>
                           <preferredSize width="200" height="350"/>
                           <selectionBackground color="-16554282"/>
                         </properties>
@@ -206,7 +216,7 @@
                           <component id="d95e5" class="javax.swing.JTextField" binding="textField1" default-binding="true">
                             <constraints/>
                             <properties>
-                              <background color="-591622"/>
+                              <background color="-789517"/>
                               <columns value="17"/>
                             </properties>
                           </component>
@@ -266,7 +276,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="bec2d" class="javax.swing.JEditorPane" binding="editorPane1" default-binding="true">
+              <component id="34715" class="javax.swing.JTextPane" binding="textPane1" default-binding="true">
                 <constraints/>
                 <properties/>
               </component>

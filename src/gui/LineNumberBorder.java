@@ -85,7 +85,7 @@ public class LineNumberBorder extends AbstractBorder
         {
             yend = y + height;
         }
-        g.setColor(Color.blue);
+        g.setColor(Color.black);
 // 绘制行号
         while (ybaseline < yend)
         {

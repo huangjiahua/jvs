@@ -1,6 +1,8 @@
 package repo;
 
 import comparator.DirectoryComparator;
+import comparator.SingleFileChanges;
+import repo.version.Version;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class Repository {
 
-    private static final String directoryName = "jvs";
+    public static final String directoryName = "jvs";
     private static final String lastFilesDirName = "lastFiles";
     private Path path, originalPath;
     /**
@@ -85,6 +87,8 @@ public class Repository {
             Path filePath = Paths.get(org.toString(), fileName);
             try {
                 if (!Files.isDirectory(filePath) && !Files.isHidden(filePath)) {
+                    if (fileName.charAt(0) == '.')
+                        continue;
                     System.out.println(filePath);
                     currentFiles.put(fileName, filePath.toFile());
                 }
@@ -236,7 +240,9 @@ public class Repository {
     }
 
 
-
+    public SingleFileChanges[] getChangedList() {
+        return dirComparator.getChangedList();
+    }
 
     public static void main(String[] args) {
         try {
@@ -245,9 +251,9 @@ public class Repository {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
-
-
-
+    public Version[] getHistories() {
+        return histories.getVersions();
     }
 }

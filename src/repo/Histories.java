@@ -94,4 +94,15 @@ class Histories {
         else
             return null;
     }
+
+    public Version[] getVersions() {
+        Version[] ret = new Version[timeLines.size()];
+        for (int i = timeLines.size() - 1; i >= 0; --i) {
+            String versionID = timeLines.get(i);
+            Version version = versions.get(versionID);
+            version.setID(versionID);
+            ret[timeLines.size() - i - 1] = version;
+        }
+        return ret;
+    }
 }
