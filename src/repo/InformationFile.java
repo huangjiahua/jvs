@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * 一个包含信息文件所有属性的类
+ * 这是一个抽象类，用于给各种根据版本库文件中的文本文件生成的管理数据的类作为超类的类。
+ * 其中包含了用于查找单一属性的哈希表和用于查找复合属性的哈希表。
  */
 public abstract class InformationFile {
     /**

@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * 管理一个版本目录，其中包含了每个版本相较于上一个版本的改变的文件的索引。
+ */
 public class VersionInventory extends InformationFile {
     private final static String fileName = "inventory.txt";
     private final static String[] text = {

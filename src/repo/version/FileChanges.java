@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * 继承了InformationFile，用于管理文件变化的信息。
+ */
 public class FileChanges extends InformationFile {
     private ArrayList<Pair<Character, String>> lines = new ArrayList<>();
     private final static String text = "maxLines = ";

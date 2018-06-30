@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * 继承InformationFile，管理整个版本库的目录，涉及了版本库的历史版本号，和上一个提交版本的文件名。
+ */
 public class RepoInventory extends InformationFile {
 
     private final static String fileName = "inventory.txt";

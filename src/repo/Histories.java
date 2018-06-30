@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * 所有历史记录
+ * 1. 管理版本库的历史记录，具有一个作为版本时间线的列表，
+ * 按顺序储存了版本库版本的信息。还有一个哈希表用于根据版本
+ * 号查找对应的Version类。
+ * 2. 可以用于初始化版本库中的历史目录，会生成初始的空版本。
  */
 class Histories {
     private final static String historiesName = "histories";

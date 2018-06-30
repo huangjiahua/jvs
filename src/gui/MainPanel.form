@@ -137,8 +137,9 @@
                       <fixedCellHeight value="30"/>
                       <font size="16"/>
                       <opaque value="true"/>
-                      <preferredSize width="200" height="350"/>
+                      <preferredSize width="200" height="800"/>
                       <selectionBackground color="-16554282"/>
+                      <visibleRowCount value="30"/>
                     </properties>
                   </component>
                 </children>
@@ -179,25 +180,6 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <scrollpane id="7763f" binding="scrollPane3">
-                    <constraints border-constraint="North"/>
-                    <properties>
-                      <horizontalScrollBarPolicy value="31"/>
-                      <preferredSize width="200" height="350"/>
-                    </properties>
-                    <border type="none"/>
-                    <children>
-                      <component id="a3c72" class="javax.swing.JList" binding="changedFiles">
-                        <constraints/>
-                        <properties>
-                          <background color="-591622"/>
-                          <font size="16"/>
-                          <preferredSize width="200" height="350"/>
-                          <selectionBackground color="-16554282"/>
-                        </properties>
-                      </component>
-                    </children>
-                  </scrollpane>
                   <grid id="50996" binding="Panel4" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints border-constraint="South"/>
                     <properties>
@@ -260,6 +242,26 @@
                       </grid>
                     </children>
                   </grid>
+                  <scrollpane id="bf04a">
+                    <constraints border-constraint="North"/>
+                    <properties>
+                      <horizontalScrollBarPolicy value="31"/>
+                      <preferredSize width="256" height="370"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="a3c72" class="javax.swing.JList" binding="changedFiles">
+                        <constraints/>
+                        <properties>
+                          <background color="-591622"/>
+                          <font size="16"/>
+                          <preferredSize width="200" height="1000"/>
+                          <selectionBackground color="-16554282"/>
+                          <visibleRowCount value="100"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
             </children>
@@ -278,7 +280,10 @@
             <children>
               <component id="34715" class="javax.swing.JTextPane" binding="textPane1" default-binding="true">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <dragEnabled value="false"/>
+                  <editable value="false"/>
+                </properties>
               </component>
             </children>
           </scrollpane>

@@ -17,11 +17,13 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 /**
- * 版本库
+ * 1. 管理版本库的类。其中包含了一个RepoInventory来管理目录，一个Histories来管理历史数据，一个哈希表来管理当前的文件，
+ * 一个哈希表来管理上一版文件。
+ * 2. 包含静态方法用于新建版本库。
  */
 public class Repository {
 
-    public static final String directoryName = "jvs";
+    public static final String directoryName = ".jvs";
     private static final String lastFilesDirName = "lastFiles";
     private Path path, originalPath;
     /**

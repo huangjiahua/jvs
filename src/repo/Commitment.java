@@ -2,6 +2,10 @@ package repo;
 
 import java.util.ArrayList;
 
+/**
+ *用与向版本库Repository类提交的数据结构，其中包含
+ *了需要更改的文件名、需要删除的文件名、总结、描述。
+ */
 public class Commitment {
     public ArrayList<String> filesToChange;
     public ArrayList<String> filesToDelete;

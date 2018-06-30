@@ -36,7 +36,6 @@ public class MainPanel {
     private JLabel HistoryTextLabel;
     private JList historiesList;
     private JScrollPane Scroll2;
-    private JScrollPane scrollPane3;
     private JList changedFiles;
     private JPanel Panel3;
     private JPanel Panel4;
@@ -85,45 +84,7 @@ public class MainPanel {
         textField1.setForeground(Color.GRAY);
         textArea2.setForeground(Color.GRAY);
 
-        Thread check = new Thread(()->{
-            while (true) {
-                if (isLoaded()) {
-                    File f = projectPath.toFile();
-                    File j = Paths.get(projectPath.toString(), Repository.directoryName).toFile();
-                    long curr = projectPath.toFile().lastModified();
 
-                    if (!f.exists()) {
-                        JOptionPane.showConfirmDialog(Main, "文件丢失，即将刷新", "问题",
-                                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        reset(1);
-                    }
-                    if (!j.exists()) {
-                        JOptionPane.showConfirmDialog(Main, "版本库意外丢失，是否重建?", "问题",
-                                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        try {
-                            reset();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (curr != time) {
-                        JOptionPane.showConfirmDialog(Main, "文件变更，即将刷新?", "问题",
-                                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        try {
-                            reset();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        check.start();
 
 
         viewChanges.addActionListener(new ActionListener() {
@@ -273,6 +234,7 @@ public class MainPanel {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
+                checkAvailable();
                 if (textField1.getText().equals("请总结")) {
                     textField1.setText("");
                     textField1.setForeground(Color.BLACK);
@@ -282,6 +244,7 @@ public class MainPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
+                checkAvailable();
                 if (textField1.getText().equals("")) {
                     textField1.setText("请总结");
                     textField1.setForeground(Color.GRAY);
@@ -292,6 +255,7 @@ public class MainPanel {
             @Override
             public void focusGained(FocusEvent e) {
                 super.focusGained(e);
+                checkAvailable();
                 if (textArea2.getText().equals("请具体描述")) {
                     textArea2.setText("");
                     textArea2.setForeground(Color.BLACK);
@@ -301,6 +265,7 @@ public class MainPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
+                checkAvailable();
                 if (textArea2.getText().equals("")) {
                     textArea2.setText("请具体描述");
                     textArea2.setForeground(Color.GRAY);
@@ -310,6 +275,8 @@ public class MainPanel {
         commitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!checkAvailable())
+                    return ;
                 String error = "";
                 boolean flag = true;
                 int[] selected = changedFiles.getSelectedIndices();
@@ -353,6 +320,30 @@ public class MainPanel {
 
             }
         });
+        changedFiles.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                checkAvailable();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+            }
+        });
+        historiesList.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                checkAvailable();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+            }
+        });
     }
 
     private void loadEditor(SingleFileChanges changedFilesName) {
@@ -374,18 +365,60 @@ public class MainPanel {
         }
     }
 
+    private boolean checkAvailable() {
+        if (isLoaded()) {
+            File dir = projectPath.toFile();
+            File r = Paths.get(projectPath.toString(), Repository.directoryName).toFile();
+            if (!dir.exists()) {
+                JOptionPane.showConfirmDialog(Main, "文件目录意外丢失，即将重置!", "问题",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                reset(1);
+                return false;
+            }
+            if (!r.exists()) {
+                int i = JOptionPane.showConfirmDialog(Main, "版本库意外丢失，是否重建?", "问题",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (i == 0) {
+                    try {
+                        Repository.initiate(projectPath);
+                        reset();
+                    } catch (RepoAlreadyExistException e) {
+                        e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+            long curr = dir.lastModified();
+            if (curr != time) {
+                JOptionPane.showConfirmDialog(Main, "文件已经修改，将立即刷新", "问题",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                try {
+                    reset();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * 将版本库信息显示在各列表中
      */
     private void setupRepository() {
         changedFilesNames = repo.getChangedList();
         historiesNames = repo.getHistories();
+        changedFiles.setVisibleRowCount(changedFilesNames.length);
         changedFiles.setListData(changedFilesNames);
+        System.out.println("\n\n" + changedFilesNames.length + "\n\n");
         historiesList.setListData(historiesNames);
         projectDir.setText("     " + projectPath.toAbsolutePath().toString());
         textPane1.setText("");
-        textField1.setText("");
-        textArea2.setText("");
+        textField1.setText("请总结");
+        textArea2.setText("请详细描述");
     }
 
     private synchronized boolean isLoaded() {
@@ -405,9 +438,10 @@ public class MainPanel {
         repo = null;
         historiesList.setListData(new String[0]);
         changedFiles.setListData(new String[0]);
-        textArea2.setText("");
-        textField1.setText("");
+        textArea2.setText("请详细描述");
+        textField1.setText("请总结");
         textPane1.setText("");
+        time = -1;
     }
 
     public static void main(String[] args) {

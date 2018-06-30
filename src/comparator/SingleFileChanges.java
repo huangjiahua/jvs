@@ -44,11 +44,7 @@ public class SingleFileChanges {
     }
 
     public String toString() {
-        String ret = "";
-        for (Pair<Character, String> p : changes) {
-            ret += p.getKey() + p.getValue() + "\n";
-        }
-        return ret;
+        return fileName;
     }
 
     public ArrayList<Pair<Character, String>> getChanges() {

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * 用于对两个文件进行比较，比较算法见本文档的算法部分。
+ */
 public class FileComparator {
     private File file1, file2;
     private ArrayList<Pair<Character, String>> changes;
@@ -82,7 +85,7 @@ public class FileComparator {
         }
 
         for (int i = src.size(), j = dst.size(), k = s1.length - 1;
-             (i != 0 || j != 0) && k != 0; --k) {
+             (i != 0 || j != 0); --k) {
             if (i == 0) {
                 s1[k] = " ";
                 s2[k] = dst.get(j-1);
@@ -96,6 +99,7 @@ public class FileComparator {
                 continue;
             }
             next = Integer.min(mat[i-1][j-1], Integer.min(mat[i][j-1], mat[i-1][j]));
+            if (k == -1) break;
             if (next == mat[i-1][j-1]) {
                 s1[k] = src.get(i-1);
                 s2[k] = dst.get(j-1);
